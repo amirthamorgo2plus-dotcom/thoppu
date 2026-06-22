@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { TreePine, Map, Users, Wheat, Droplets, AlertTriangle, Star, ArrowRight, CheckCircle, Tractor, ShoppingBag, Wrench, TrendingUp, Shield, Smartphone } from "lucide-react";
+import { TreePine, Map, Users, Wheat, Droplets, AlertTriangle, Star, ArrowRight, TrendingUp, Shield, Smartphone } from "lucide-react";
 
 export default function Home() {
   return (
@@ -16,7 +16,6 @@ export default function Home() {
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
             <a href="#features" className="hover:text-green-700">Features</a>
             <a href="#marketplace" className="hover:text-green-700">Marketplace</a>
-            <a href="#pricing" className="hover:text-green-700">Pricing</a>
             <a href="#about" className="hover:text-green-700">About</a>
           </div>
           <div className="flex items-center gap-3">
@@ -204,54 +203,6 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-green-100 text-green-700 font-bold text-lg flex items-center justify-center mx-auto mb-4">{step}</div>
                 <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PRICING ── */}
-      <section id="pricing" className="py-20 px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple, honest pricing</h2>
-            <p className="text-gray-500">Start free. Pay only when you see the value.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Free Trial", price: "₹0", period: "forever",
-                features: ["1 farm", "All 7 modules", "Up to 3 workers", "Harvest logging", "Community support"],
-                cta: "Start Free", highlight: false,
-              },
-              {
-                name: "Farmer", price: "₹299", period: "/month",
-                features: ["1 farm", "All modules", "Unlimited workers", "Live satellite map", "WhatsApp alerts", "Priority support"],
-                cta: "Start Free Trial", highlight: true,
-              },
-              {
-                name: "Planter", price: "₹699", period: "/month",
-                features: ["Up to 3 farms", "All Farmer features", "Yield analytics", "PDF reports", "Export data", "Dedicated support"],
-                cta: "Start Free Trial", highlight: false,
-              },
-            ].map(({ name, price, period, features, cta, highlight }) => (
-              <div key={name} className={`rounded-2xl p-6 border ${highlight ? "bg-green-900 text-white border-green-700 scale-105 shadow-xl" : "bg-white border-gray-100 shadow-sm"}`}>
-                <div className={`text-sm font-semibold mb-1 ${highlight ? "text-green-300" : "text-gray-500"}`}>{name}</div>
-                <div className="flex items-end gap-1 mb-6">
-                  <span className={`text-4xl font-bold ${highlight ? "text-white" : "text-gray-900"}`}>{price}</span>
-                  <span className={`text-sm mb-1.5 ${highlight ? "text-green-300" : "text-gray-400"}`}>{period}</span>
-                </div>
-                <ul className="space-y-2.5 mb-6">
-                  {features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <CheckCircle size={14} className={highlight ? "text-green-300" : "text-green-500"} />
-                      <span className={highlight ? "text-green-100" : "text-gray-600"}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/login" className={`block text-center py-2.5 rounded-xl text-sm font-semibold transition-colors ${highlight ? "bg-white text-green-900 hover:bg-green-50" : "bg-green-700 text-white hover:bg-green-800"}`}>
-                  {cta}
-                </Link>
               </div>
             ))}
           </div>
