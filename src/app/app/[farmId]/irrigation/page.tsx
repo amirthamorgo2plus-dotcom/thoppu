@@ -1,13 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Droplets, Plus, Zap, Trash2 } from "lucide-react";
 
 type Valve = { id: string; name: string; block: string; status: string; last_run: string; duration: string };
 type Borewell = { id: string; name: string; depth: string; motor: string; feeds: string; last_service: string };
 
-export default function Irrigation({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function Irrigation({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [valves, setValves] = useState<Valve[]>([]);
   const [borewells, setBorewells] = useState<Borewell[]>([]);
   const [showValve, setShowValve] = useState(false);

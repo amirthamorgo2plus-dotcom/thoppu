@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Droplets, Home, TreePine, Plus, Trash2 } from "lucide-react";
 
@@ -12,8 +12,8 @@ const markerTypes = [
 
 type Marker = { id: string; type: string; label: string; lat: string; lng: string; notes: string };
 
-export default function FarmMap({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function FarmMap({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ type: "block", label: "", lat: "", lng: "", notes: "" });

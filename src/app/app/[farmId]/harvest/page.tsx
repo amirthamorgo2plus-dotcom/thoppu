@@ -1,12 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Wheat, Trash2 } from "lucide-react";
 
 type Log = { id: string; date: string; block: string; count: number; notes: string };
 
-export default function Harvest({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function Harvest({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [logs, setLogs] = useState<Log[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ date: "", block: "", count: "", notes: "" });

@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { TreePine, Users, Wheat, Droplets, AlertTriangle, Activity } from "lucide-react";
 import Link from "next/link";
 
-export default function Dashboard({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function Dashboard({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [farm, setFarm] = useState<any>(null);
   const [counts, setCounts] = useState({ workers: 0, harvests: 0, problems: 0, valves: 0 });
 

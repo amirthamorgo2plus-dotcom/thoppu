@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, User, CheckCircle, Clock, Trash2 } from "lucide-react";
 
@@ -14,8 +14,8 @@ const statusStyle: Record<string, string> = {
 
 const nextStatus: Record<string, string> = { pending: "in-progress", "in-progress": "done", done: "pending" };
 
-export default function Workers({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function Workers({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [logs, setLogs] = useState<WorkLog[]>([]);
   const [showWorkerForm, setShowWorkerForm] = useState(false);

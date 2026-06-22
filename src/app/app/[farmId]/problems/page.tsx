@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, AlertTriangle, CheckCircle, Trash2 } from "lucide-react";
 
@@ -7,8 +7,8 @@ type Problem = { id: string; type: string; title: string; block: string; date: s
 const types = ["Pest", "Disease", "Soil", "Water", "Tree damage", "Equipment", "Other"];
 const statusColor: Record<string, string> = { open: "bg-red-100 text-red-700", "in-progress": "bg-yellow-100 text-yellow-700", resolved: "bg-green-100 text-green-700" };
 
-export default function Problems({ params }: { params: { farmId: string } }) {
-  const { farmId } = params;
+export default function Problems({ params }: { params: Promise<{ farmId: string }> }) {
+  const { farmId } = use(params);
   const [problems, setProblems] = useState<Problem[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ type: "Pest", title: "", block: "", date: "", solution: "" });
