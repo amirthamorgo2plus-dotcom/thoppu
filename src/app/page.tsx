@@ -14,6 +14,7 @@ export default function Home() {
             <span className="font-bold text-green-900 text-lg">Thoppu</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
+            <a href="#" className="hover:text-green-700">Home</a>
             <a href="#features" className="hover:text-green-700">Features</a>
             <a href="#marketplace" className="hover:text-green-700">Marketplace</a>
             <a href="#about" className="hover:text-green-700">About</a>
