@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Users, Wheat, MessageCircle, LogOut, Send, TrendingUp } from "lucide-react";
 
-const ADMIN_EMAIL = "karstryker@gmail.com";
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "";
 
 type Farm = { id: string; name: string; location: string; owner_email: string; created_at: string };
 
