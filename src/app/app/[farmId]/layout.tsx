@@ -6,7 +6,7 @@ export default function FarmLayout({ children, params }: { children: React.React
   return (
     <div className="flex min-h-screen bg-gray-50">
       <FarmSidebar farmId={farmId} />
-      <main className="flex-1 ml-64 p-6 overflow-auto">{children}</main>
+      <main className="flex-1 md:ml-64 p-4 md:p-6 pt-16 md:pt-6 pb-24 md:pb-6 overflow-auto">{children}</main>
     </div>
   );
 }
