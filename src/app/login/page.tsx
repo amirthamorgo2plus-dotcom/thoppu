@@ -14,7 +14,7 @@ export default function Login() {
     setError(""); setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/farms` },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) setError(error.message);
     else setSent(true);
