@@ -1,7 +1,12 @@
 "use client";
 import { use, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabase";
-import { MapPin, Droplets, Home, TreePine, Plus, Trash2 } from "lucide-react";
+import { MapPin, TreePine, Droplets, Home, Plus, Trash2 } from "lucide-react";
+
+const FarmMapLeaflet = dynamic(() => import("@/components/FarmMap"), { ssr: false, loading: () => (
+  <div className="h-[400px] bg-green-50 rounded-xl flex items-center justify-center text-green-500 text-sm">Loading map...</div>
+)});
 
 const markerTypes = [
   { type: "block", label: "Block / Partition", icon: TreePine, color: "text-green-600" },
@@ -38,6 +43,8 @@ export default function FarmMap({ params }: { params: Promise<{ farmId: string }
     setMarkers(markers.filter(m => m.id !== id));
   };
 
+  const hasCoords = markers.some(m => m.lat && m.lng);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -50,12 +57,17 @@ export default function FarmMap({ params }: { params: Promise<{ farmId: string }
         </button>
       </div>
 
-      <div className="bg-green-50 border-2 border-dashed border-green-200 rounded-xl h-64 flex flex-col items-center justify-center mb-6 text-center px-4">
-        <MapPin className="text-green-400 mb-2" size={36} />
-        <p className="text-green-700 font-medium">Live Satellite Map Coming Soon</p>
-        <p className="text-green-500 text-sm mt-1">Share the GPS coordinates of your farm boundary and I&apos;ll wire up the interactive map.</p>
-        <p className="text-green-400 text-xs mt-2">Leaflet + OpenStreetMap · 100% free</p>
-      </div>
+      {hasCoords ? (
+        <div className="mb-6 rounded-xl overflow-hidden shadow-sm border border-gray-100">
+          <FarmMapLeaflet markers={markers} />
+        </div>
+      ) : (
+        <div className="bg-green-50 border-2 border-dashed border-green-200 rounded-xl h-48 flex flex-col items-center justify-center mb-6 text-center px-4">
+          <MapPin className="text-green-400 mb-2" size={32} />
+          <p className="text-green-700 font-medium text-sm">Add a location with GPS coordinates to see the live map</p>
+          <p className="text-green-400 text-xs mt-1">OpenStreetMap · 100% free</p>
+        </div>
+      )}
 
       {showForm && (
         <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-sm">
