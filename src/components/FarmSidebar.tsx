@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Users, Wheat, Droplets, AlertTriangle, Link2, ChevronLeft, LogOut } from "lucide-react";
+import { LayoutDashboard, Map, Users, Wheat, Droplets, AlertTriangle, Link2, ChevronLeft, LogOut, CloudSun } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 
@@ -13,6 +13,7 @@ const navItems = [
   { key: "harvest", label: "Harvest & Yield", icon: Wheat },
   { key: "irrigation", label: "Irrigation", icon: Droplets },
   { key: "problems", label: "Problems", icon: AlertTriangle },
+  { key: "weather", label: "Weather", icon: CloudSun },
   { key: "useful-links", label: "Links", icon: Link2 },
 ];
 
