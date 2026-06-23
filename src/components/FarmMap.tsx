@@ -66,9 +66,20 @@ export default function FarmMapLeaflet({ markers, geofences, drawing, drawPoints
     .filter(m => m.lat && m.lng && !isNaN(parseFloat(m.lat)) && !isNaN(parseFloat(m.lng)))
     .map(m => ({ ...m, lat: parseFloat(m.lat), lng: parseFloat(m.lng) }));
 
+  // Normalize geofence points — accept both [lat,lng] tuples and {lat,lng} objects,
+  // and drop any malformed points so bad data can't crash the map.
+  const validGeofences = geofences
+    .map(g => ({
+      ...g,
+      points: (Array.isArray(g.points) ? g.points : [])
+        .map((p: any) => Array.isArray(p) ? [Number(p[0]), Number(p[1])] : [Number(p?.lat), Number(p?.lng)])
+        .filter((p: number[]) => !isNaN(p[0]) && !isNaN(p[1])) as [number, number][],
+    }))
+    .filter(g => g.points.length >= 3);
+
   const allPoints = [
     ...validMarkers.map(m => ({ lat: m.lat, lng: m.lng })),
-    ...geofences.flatMap(g => g.points.map(p => ({ lat: p[0], lng: p[1] }))),
+    ...validGeofences.flatMap(g => g.points.map(p => ({ lat: p[0], lng: p[1] }))),
   ];
 
   const center: [number, number] = allPoints.length > 0
@@ -111,7 +122,7 @@ export default function FarmMapLeaflet({ markers, geofences, drawing, drawPoints
       <ClickHandler drawing={drawing} onAddPoint={onAddPoint} />
 
       {/* Saved geofences */}
-      {geofences.map(g => (
+      {validGeofences.map(g => (
         <Polygon key={g.id} positions={g.points} pathOptions={{ color: g.color, fillColor: g.color, fillOpacity: 0.15, weight: 2 }}>
           <Popup><div className="text-sm font-semibold">{g.name}</div></Popup>
         </Polygon>
