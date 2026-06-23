@@ -101,13 +101,15 @@ export default function Farms() {
           </div>
         )}
 
-        {farms.length === 0 && !showForm ? (
+        {farms.length === 0 && !showForm && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
             <TreePine className="text-green-300 mx-auto mb-3" size={40} />
             <p className="text-gray-500 font-medium">No farms yet</p>
             <p className="text-gray-400 text-sm mt-1">Click &quot;Add Farm&quot; to create your first farm</p>
           </div>
-        ) : (
+        )}
+
+        {farms.length > 0 && (
           <div className="space-y-3">
             {farms.map(farm => (
               <button key={farm.id} onClick={() => router.push(`/app/${farm.id}/dashboard`)}
@@ -128,6 +130,27 @@ export default function Farms() {
             ))}
           </div>
         )}
+
+        {/* Demo Farm */}
+        <div className="mt-6 border-t border-gray-200 pt-6">
+          <p className="text-xs text-gray-400 mb-3 text-center">Want to explore first?</p>
+          <button onClick={() => router.push("/app/00000000-0000-0000-0000-000000000001/dashboard")}
+            className="w-full bg-green-50 border-2 border-dashed border-green-200 rounded-xl p-5 text-left hover:border-green-400 hover:bg-green-100 transition-all">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="font-semibold text-green-800">🌴 Kallapuram Demo Farm</div>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <MapPin size={11} /> Pollachi, Tamil Nadu
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">Demo</div>
+                <div className="text-xs text-green-500 mt-1">25 acres · Coconut</div>
+              </div>
+            </div>
+            <p className="text-xs text-green-600 mt-2">Explore all features with sample data →</p>
+          </button>
+        </div>
       </div>
     </div>
   );
