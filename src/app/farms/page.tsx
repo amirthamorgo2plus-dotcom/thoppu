@@ -25,7 +25,7 @@ export default function Farms() {
   }, []);
 
   const fetchFarms = async () => {
-    const { data } = await supabase.from("farms").select("*").order("created_at");
+    const { data } = await supabase.from("farms").select("*").neq("id", "00000000-0000-0000-0000-000000000001").order("created_at");
     setFarms(data || []);
     setLoading(false);
   };
