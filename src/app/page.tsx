@@ -53,7 +53,7 @@ export default function Home() {
                   Start Free — No Card Needed <ArrowRight size={16} />
                 </Link>
                 <Link href="/app/00000000-0000-0000-0000-000000000001/dashboard" className="flex items-center justify-center gap-2 border border-green-300 text-green-700 font-medium px-6 py-3.5 rounded-xl hover:bg-green-50 transition-colors text-sm">
-                  🌴 Try the Demo Farm
+                  🌴 Visit Our Demo Farm
                 </Link>
               </div>
               <div className="flex items-center gap-6 mt-8 text-sm text-gray-500 flex-wrap">
@@ -413,7 +413,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link href="/app/00000000-0000-0000-0000-000000000001/dashboard"
               className="inline-flex items-center gap-2 bg-green-700 text-white font-semibold px-6 py-3.5 rounded-xl hover:bg-green-800 transition-colors text-sm">
-              🌴 Explore the Demo Farm <ArrowRight size={16} />
+              🌴 Visit Our Demo Farm <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -526,7 +526,7 @@ export default function Home() {
             </Link>
             <Link href="/app/00000000-0000-0000-0000-000000000001/dashboard"
               className="inline-flex items-center justify-center gap-2 border border-green-600 text-green-200 font-semibold px-8 py-4 rounded-xl hover:bg-green-800 transition-colors">
-              🌴 Try Demo Farm
+              🌴 Visit Our Demo Farm
             </Link>
           </div>
         </div>
