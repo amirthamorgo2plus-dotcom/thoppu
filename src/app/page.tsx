@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { TreePine, Map, Users, Wheat, Droplets, AlertTriangle, Star, ArrowRight, TrendingUp, Shield, Smartphone } from "lucide-react";
+import { TreePine, Map, Users, Wheat, Droplets, AlertTriangle, Star, ArrowRight, TrendingUp, Shield, Smartphone, CheckCircle } from "lucide-react";
 
 export default function Home() {
   return (
