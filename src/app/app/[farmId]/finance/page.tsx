@@ -1,13 +1,12 @@
 "use client";
 import { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, TrendingUp, TrendingDown, IndianRupee, Zap, FileText } from "lucide-react";
+import { Plus, Trash2, TrendingUp, TrendingDown, IndianRupee, FileText } from "lucide-react";
 
 type Entry = { id: string; type: "income" | "expense"; category: string; amount: number; date: string; notes: string };
 
 const expenseCategories = ["Fertiliser", "Pesticide", "Labour", "Equipment", "Fuel", "Electricity (EB)", "Land Tax", "Water", "Transport", "Repair", "Other"];
 const incomeCategories = ["Coconut Sale", "Copra Sale", "Coir Sale", "Other"];
-
 const categoryEmoji: Record<string, string> = {
   "Fertiliser": "🌿", "Pesticide": "🐛", "Labour": "👷", "Equipment": "🔧",
   "Fuel": "⛽", "Electricity (EB)": "⚡", "Land Tax": "📋", "Water": "💧",
@@ -15,11 +14,16 @@ const categoryEmoji: Record<string, string> = {
   "Coconut Sale": "🥥", "Copra Sale": "🪨", "Coir Sale": "🌾",
 };
 
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const EXP_COLORS = ["#fca5a5","#fcd34d","#bfdbfe","#c4b5fd","#f9a8d4","#86efac","#67e8f9","#fca5a5","#a5f3fc","#fde68a","#d9f99d"];
+
 export default function FinancePage({ params }: { params: Promise<{ farmId: string }> }) {
   const { farmId } = use(params);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [tab, setTab] = useState<"all" | "income" | "expense">("all");
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
+  const [filterMonth, setFilterMonth] = useState("all");
   const [form, setForm] = useState({ type: "expense" as "income" | "expense", category: "Fertiliser", amount: "", date: new Date().toISOString().slice(0, 10), notes: "" });
 
   const fetchEntries = async () => {
@@ -42,20 +46,44 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
     setEntries(entries.filter(e => e.id !== id));
   };
 
-  const totalIncome = entries.filter(e => e.type === "income").reduce((s, e) => s + e.amount, 0);
-  const totalExpense = entries.filter(e => e.type === "expense").reduce((s, e) => s + e.amount, 0);
+  const years = [...new Set(entries.map(e => e.date.slice(0, 4)))].sort().reverse();
+
+  const filtered = entries.filter(e => {
+    const yr = e.date.slice(0, 4);
+    const mo = parseInt(e.date.slice(5, 7));
+    if (filterYear !== "all" && yr !== filterYear) return false;
+    if (filterMonth !== "all" && mo !== parseInt(filterMonth)) return false;
+    return true;
+  });
+
+  const filteredByTab = filtered.filter(e => tab === "all" ? true : e.type === tab);
+
+  const totalIncome = filtered.filter(e => e.type === "income").reduce((s, e) => s + e.amount, 0);
+  const totalExpense = filtered.filter(e => e.type === "expense").reduce((s, e) => s + e.amount, 0);
   const profit = totalIncome - totalExpense;
 
-  const thisMonth = new Date().toISOString().slice(0, 7);
-  const monthIncome = entries.filter(e => e.type === "income" && e.date.startsWith(thisMonth)).reduce((s, e) => s + e.amount, 0);
-  const monthExpense = entries.filter(e => e.type === "expense" && e.date.startsWith(thisMonth)).reduce((s, e) => s + e.amount, 0);
+  // All-time for summary
+  const allIncome = entries.filter(e => e.type === "income").reduce((s, e) => s + e.amount, 0);
+  const allExpense = entries.filter(e => e.type === "expense").reduce((s, e) => s + e.amount, 0);
 
-  // Group expenses by category
-  const expByCategory = expenseCategories.map(cat => ({
-    cat, total: entries.filter(e => e.type === "expense" && e.category === cat).reduce((s, e) => s + e.amount, 0),
+  // Expense breakdown (filtered)
+  const expByCategory = expenseCategories.map((cat, i) => ({
+    cat, color: EXP_COLORS[i % EXP_COLORS.length],
+    total: filtered.filter(e => e.type === "expense" && e.category === cat).reduce((s, e) => s + e.amount, 0),
   })).filter(x => x.total > 0).sort((a, b) => b.total - a.total);
 
-  const filtered = entries.filter(e => tab === "all" ? true : e.type === tab);
+  // Monthly income vs expense chart
+  const now = new Date();
+  const monthlyChart = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    return {
+      label: MONTHS[d.getMonth()],
+      income: entries.filter(e => e.type === "income" && e.date.startsWith(key)).reduce((s, e) => s + e.amount, 0),
+      expense: entries.filter(e => e.type === "expense" && e.date.startsWith(key)).reduce((s, e) => s + e.amount, 0),
+    };
+  });
+  const chartMax = Math.max(...monthlyChart.flatMap(m => [m.income, m.expense]), 1);
 
   return (
     <div>
@@ -70,17 +98,30 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
         </button>
       </div>
 
+      {/* Filters */}
+      <div className="flex gap-3 mb-5 flex-wrap">
+        <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+          <option value="all">All Years</option>
+          {years.map(y => <option key={y} value={y}>{y}</option>)}
+          {!years.includes(new Date().getFullYear().toString()) && <option value={new Date().getFullYear().toString()}>{new Date().getFullYear()}</option>}
+        </select>
+        <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+          <option value="all">All Months</option>
+          {MONTHS.map((m, i) => <option key={m} value={String(i + 1)}>{m}</option>)}
+        </select>
+      </div>
+
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-green-700 text-white rounded-xl p-4">
           <TrendingUp size={18} className="mb-2 text-green-300" />
           <div className="text-2xl font-bold">₹{totalIncome.toLocaleString()}</div>
-          <div className="text-green-300 text-xs mt-1">Total Income</div>
+          <div className="text-green-300 text-xs mt-1">Income {filterMonth !== "all" || filterYear !== "all" ? "(filtered)" : ""}</div>
         </div>
-        <div className="bg-red-600 text-white rounded-xl p-4">
-          <TrendingDown size={18} className="mb-2 text-red-300" />
+        <div className="bg-red-500 text-white rounded-xl p-4">
+          <TrendingDown size={18} className="mb-2 text-red-200" />
           <div className="text-2xl font-bold">₹{totalExpense.toLocaleString()}</div>
-          <div className="text-red-300 text-xs mt-1">Total Expenses</div>
+          <div className="text-red-200 text-xs mt-1">Expenses {filterMonth !== "all" || filterYear !== "all" ? "(filtered)" : ""}</div>
         </div>
         <div className={`${profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"} border rounded-xl p-4`}>
           <IndianRupee size={18} className={`mb-2 ${profit >= 0 ? "text-green-600" : "text-red-600"}`} />
@@ -89,17 +130,39 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
         </div>
         <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
           <FileText size={18} className="mb-2 text-blue-500" />
-          <div className="text-2xl font-bold text-gray-800">₹{monthExpense.toLocaleString()}</div>
-          <div className="text-gray-400 text-xs mt-1">This Month Expense</div>
+          <div className="text-2xl font-bold text-gray-800">₹{(allIncome - allExpense).toLocaleString()}</div>
+          <div className="text-gray-400 text-xs mt-1">All-time Net</div>
         </div>
       </div>
+
+      {/* Monthly chart */}
+      {entries.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-5">
+          <h2 className="font-semibold text-gray-700 mb-4">Income vs Expenses — Last 6 Months</h2>
+          <div className="flex items-end gap-3 h-28">
+            {monthlyChart.map(({ label, income, expense }) => (
+              <div key={label} className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full flex gap-0.5 items-end" style={{ height: "90px" }}>
+                  <div className="flex-1 rounded-t-sm" style={{ height: `${Math.max((income / chartMax) * 90, income > 0 ? 3 : 0)}px`, background: "#86efac" }} />
+                  <div className="flex-1 rounded-t-sm" style={{ height: `${Math.max((expense / chartMax) * 90, expense > 0 ? 3 : 0)}px`, background: "#fca5a5" }} />
+                </div>
+                <span className="text-xs text-gray-400">{label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-4 mt-2">
+            <span className="flex items-center gap-1.5 text-xs text-gray-500"><span className="w-3 h-3 rounded-sm inline-block bg-green-300" /> Income</span>
+            <span className="flex items-center gap-1.5 text-xs text-gray-500"><span className="w-3 h-3 rounded-sm inline-block bg-red-300" /> Expenses</span>
+          </div>
+        </div>
+      )}
 
       {/* Expense breakdown bar chart */}
       {expByCategory.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
           <h2 className="font-semibold text-gray-700 mb-4">Expense Breakdown</h2>
           <div className="space-y-3">
-            {expByCategory.map(({ cat, total }) => {
+            {expByCategory.map(({ cat, total, color }) => {
               const pct = Math.round((total / totalExpense) * 100);
               return (
                 <div key={cat}>
@@ -108,7 +171,7 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
                     <span className="font-medium text-gray-800">₹{total.toLocaleString()} <span className="text-gray-400 text-xs">({pct}%)</span></span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-600 rounded-full" style={{ width: `${pct}%` }} />
+                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
                   </div>
                 </div>
               );
@@ -173,11 +236,11 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
             ))}
           </div>
         </div>
-        {filtered.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-sm">No entries yet</div>
+        {filteredByTab.length === 0 ? (
+          <div className="p-8 text-center text-gray-400 text-sm">No entries for selected period</div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {filtered.map(e => (
+            {filteredByTab.map(e => (
               <div key={e.id} className="flex items-center gap-4 px-5 py-3">
                 <div className="text-xl">{categoryEmoji[e.category] || "📦"}</div>
                 <div className="flex-1">
@@ -192,9 +255,13 @@ export default function FinancePage({ params }: { params: Promise<{ farmId: stri
             ))}
           </div>
         )}
-        {filtered.length > 0 && (
+        {filteredByTab.length > 0 && (
           <div className="px-5 py-3 border-t border-gray-100 flex justify-between text-sm">
-            <span className="text-gray-500">This month: <span className="text-green-600 font-medium">+₹{monthIncome.toLocaleString()}</span> / <span className="text-red-500 font-medium">-₹{monthExpense.toLocaleString()}</span></span>
+            <span className="text-gray-500">
+              Income: <span className="text-green-600 font-medium">₹{totalIncome.toLocaleString()}</span>
+              {" · "}
+              Expense: <span className="text-red-500 font-medium">₹{totalExpense.toLocaleString()}</span>
+            </span>
             <span className={`font-semibold ${profit >= 0 ? "text-green-700" : "text-red-600"}`}>Net: ₹{profit.toLocaleString()}</span>
           </div>
         )}

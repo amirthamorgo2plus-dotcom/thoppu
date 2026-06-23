@@ -11,8 +11,8 @@ const statusStyle: Record<string, string> = {
   "in-progress": "bg-yellow-100 text-yellow-700",
   pending: "bg-gray-100 text-gray-500",
 };
-
 const nextStatus: Record<string, string> = { pending: "in-progress", "in-progress": "done", done: "pending" };
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 export default function Workers({ params }: { params: Promise<{ farmId: string }> }) {
   const { farmId } = use(params);
@@ -22,11 +22,13 @@ export default function Workers({ params }: { params: Promise<{ farmId: string }
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [wForm, setWForm] = useState({ name: "", role: "", phone: "", wage: "" });
   const [tForm, setTForm] = useState({ worker_name: "", task: "", date: new Date().toISOString().slice(0, 10) });
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().slice(0, 10));
+  const [viewAll, setViewAll] = useState(false);
 
   const fetchAll = async () => {
     const [w, l] = await Promise.all([
       supabase.from("workers").select("*").eq("farm_id", farmId).order("name"),
-      supabase.from("work_logs").select("*").eq("farm_id", farmId).eq("date", new Date().toISOString().slice(0, 10)).order("created_at"),
+      supabase.from("work_logs").select("*").eq("farm_id", farmId).order("date", { ascending: false }),
     ]);
     setWorkers(w.data || []);
     setLogs(l.data || []);
@@ -61,12 +63,29 @@ export default function Workers({ params }: { params: Promise<{ farmId: string }
     setLogs(logs.filter(l => l.id !== id));
   };
 
+  const displayedLogs = viewAll ? logs : logs.filter(l => l.date === filterDate);
+
+  // Monthly task completion chart (last 6 months)
+  const now = new Date();
+  const monthlyChart = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const month = MONTHS[d.getMonth()];
+    const monthLogs = logs.filter(l => l.date.startsWith(key));
+    return {
+      label: month,
+      total: monthLogs.length,
+      done: monthLogs.filter(l => l.status === "done").length,
+    };
+  });
+  const chartMax = Math.max(...monthlyChart.map(m => m.total), 1);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Workers & Work</h1>
-          <p className="text-gray-500 text-sm mt-1">Today&apos;s roster and task tracking</p>
+          <p className="text-gray-500 text-sm mt-1">Roster and task tracking</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => setShowTaskForm(!showTaskForm)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
@@ -78,20 +97,44 @@ export default function Workers({ params }: { params: Promise<{ farmId: string }
         </div>
       </div>
 
+      {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
           <div className="text-2xl font-bold text-gray-800">{workers.length}</div>
           <div className="text-sm text-gray-500 mt-0.5">Total Workers</div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{logs.filter(l => l.status === "done").length}</div>
-          <div className="text-sm text-gray-500 mt-0.5">Tasks Done Today</div>
+          <div className="text-2xl font-bold text-green-600">{displayedLogs.filter(l => l.status === "done").length}</div>
+          <div className="text-sm text-gray-500 mt-0.5">Tasks Done</div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
           <div className="text-2xl font-bold text-gray-800">₹{workers.reduce((a, w) => a + w.wage, 0)}</div>
           <div className="text-sm text-gray-500 mt-0.5">Daily Wages Total</div>
         </div>
       </div>
+
+      {/* Monthly chart */}
+      {logs.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-5">
+          <h2 className="font-semibold text-gray-700 mb-4">Tasks — Last 6 Months</h2>
+          <div className="flex items-end gap-2 h-24">
+            {monthlyChart.map(({ label, total, done }) => (
+              <div key={label} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-xs text-gray-400">{total > 0 ? total : ""}</span>
+                <div className="w-full flex flex-col justify-end" style={{ height: "80px" }}>
+                  <div className="w-full rounded-t-md" style={{ height: `${Math.max((total / chartMax) * 100, 2)}%`, background: "#bfdbfe" }} />
+                  <div className="w-full rounded-t-none" style={{ height: `${Math.max((done / chartMax) * 100, done > 0 ? 2 : 0)}%`, background: "#86efac", marginTop: "-" + Math.max((done / chartMax) * 100, done > 0 ? 2 : 0) + "%" }} />
+                </div>
+                <span className="text-xs text-gray-400">{label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-4 mt-3">
+            <span className="flex items-center gap-1.5 text-xs text-gray-500"><span className="w-3 h-3 rounded-sm inline-block bg-blue-200" /> Total tasks</span>
+            <span className="flex items-center gap-1.5 text-xs text-gray-500"><span className="w-3 h-3 rounded-sm inline-block bg-green-300" /> Done</span>
+          </div>
+        </div>
+      )}
 
       {showWorkerForm && (
         <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4 shadow-sm">
@@ -140,18 +183,33 @@ export default function Workers({ params }: { params: Promise<{ farmId: string }
         </div>
       )}
 
+      {/* Task log with date filter */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4">
-        <div className="px-5 py-3 border-b border-gray-100"><h2 className="font-semibold text-gray-700">Today&apos;s Tasks</h2></div>
-        {logs.length === 0 ? <div className="p-8 text-center text-gray-400 text-sm">No tasks assigned today</div> : (
+        <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-3 flex-wrap">
+          <h2 className="font-semibold text-gray-700">Task Log</h2>
+          <div className="flex items-center gap-2">
+            {!viewAll && (
+              <input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)}
+                className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white" />
+            )}
+            <button onClick={() => setViewAll(!viewAll)}
+              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${viewAll ? "bg-green-700 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+              {viewAll ? "All dates" : "Filter by date"}
+            </button>
+          </div>
+        </div>
+        {displayedLogs.length === 0 ? (
+          <div className="p-8 text-center text-gray-400 text-sm">{viewAll ? "No tasks found" : "No tasks for this date"}</div>
+        ) : (
           <div className="divide-y divide-gray-50">
-            {logs.map(l => (
+            {displayedLogs.map(l => (
               <div key={l.id} className="flex items-center gap-4 px-5 py-4">
-                <User className="text-green-600" size={16} />
+                <User className="text-green-600 shrink-0" size={16} />
                 <div className="flex-1">
                   <div className="font-medium text-gray-800 text-sm">{l.worker_name || "Unassigned"}</div>
-                  <div className="text-xs text-gray-500">{l.task}</div>
+                  <div className="text-xs text-gray-500">{l.task}{viewAll ? ` · ${l.date}` : ""}</div>
                 </div>
-                <button onClick={() => cycleStatus(l)} className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${statusStyle[l.status]}`}>
+                <button onClick={() => cycleStatus(l)} className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0 ${statusStyle[l.status]}`}>
                   {l.status === "done" ? <CheckCircle size={12} /> : <Clock size={12} />} {l.status}
                 </button>
                 <button onClick={() => deleteLog(l.id)} className="text-gray-300 hover:text-red-400"><Trash2 size={14} /></button>
@@ -161,6 +219,7 @@ export default function Workers({ params }: { params: Promise<{ farmId: string }
         )}
       </div>
 
+      {/* Worker roster */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-5 py-3 border-b border-gray-100"><h2 className="font-semibold text-gray-700">Worker Roster</h2></div>
         {workers.length === 0 ? <div className="p-8 text-center text-gray-400 text-sm">No workers added yet</div> : (
