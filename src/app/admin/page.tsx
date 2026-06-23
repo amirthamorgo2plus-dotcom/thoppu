@@ -19,7 +19,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email !== ADMIN_EMAIL) { router.push("/login"); return; }
+      if (!data.user || data.user.email !== ADMIN_EMAIL) { router.push("/login"); return; }
       setAuthorized(true);
       fetch("/api/admin/farms").then(r => r.json()).then(d => {
         setFarms(d.farms || []);
@@ -55,7 +55,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-green-900 text-white px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Thoppu Admin</h1>
@@ -67,8 +66,6 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: "Total Farms", value: farms.length, icon: Wheat, color: "text-green-600" },
@@ -84,7 +81,6 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Chart — farms per month (last 6 months) */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-8">
           <h2 className="font-semibold text-gray-700 mb-4">Farm Signups — Last 6 Months</h2>
           <div className="flex items-end gap-3 h-32">
@@ -114,7 +110,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* WhatsApp Magic Link */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-8">
           <div className="flex items-center gap-2 mb-4">
             <MessageCircle className="text-green-600" size={20} />
@@ -137,7 +132,6 @@ export default function AdminPage() {
           {linkStatus && <p className="text-sm mt-3 text-green-700">{linkStatus}</p>}
         </div>
 
-        {/* Farms Table */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-700">All Farms ({farms.length})</h2>
@@ -164,10 +158,7 @@ export default function AdminPage() {
                       <td className="px-6 py-4 text-gray-500">{f.location || "—"}</td>
                       <td className="px-6 py-4 text-gray-400">{new Date(f.created_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => { setEmail(f.owner_email); }}
-                          className="text-xs text-green-700 hover:underline"
-                        >
+                        <button onClick={() => setEmail(f.owner_email)} className="text-xs text-green-700 hover:underline">
                           Send link
                         </button>
                       </td>
