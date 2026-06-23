@@ -18,6 +18,7 @@ export default function Farms() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) { router.push("/login"); return; }
+      if (data.user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) { router.push("/admin"); return; }
       setUserName(data.user.user_metadata?.name || data.user.email || "");
       fetchFarms();
     });
