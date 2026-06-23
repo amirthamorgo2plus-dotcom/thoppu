@@ -2,29 +2,22 @@
 import { useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const handle = async () => {
-    setError(""); setMessage(""); setLoading(true);
-    if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
-      if (error) setError(error.message);
-      else setMessage("Check your email to confirm your account, then log in.");
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else router.push("/farms");
-    }
+  const sendLink = async () => {
+    if (!email) return;
+    setError(""); setLoading(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/farms` },
+    });
+    if (error) setError(error.message);
+    else setSent(true);
     setLoading(false);
   };
 
@@ -37,42 +30,45 @@ export default function Login() {
           <p className="text-gray-500 text-sm mt-1">Your farm, in your palm</p>
         </div>
 
-        <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
-          {(["login", "signup"] as const).map(m => (
-            <button key={m} onClick={() => setMode(m)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${mode === m ? "bg-white text-green-800 shadow-sm" : "text-gray-500"}`}>
-              {m === "login" ? "Log In" : "Sign Up"}
+        {sent ? (
+          <div className="text-center py-4">
+            <div className="text-4xl mb-4">📬</div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Check your inbox</h2>
+            <p className="text-gray-500 text-sm leading-relaxed">
+              We sent a magic link to <span className="font-medium text-green-700">{email}</span>.<br />
+              Click it to sign in — no password needed.
+            </p>
+            <button onClick={() => { setSent(false); setEmail(""); }}
+              className="mt-6 text-sm text-green-700 hover:underline">
+              Use a different email
             </button>
-          ))}
-        </div>
-
-        <div className="space-y-4">
-          {mode === "signup" && (
+          </div>
+        ) : (
+          <div className="space-y-4">
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Your Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Priya Devi"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+              <label className="text-xs text-gray-500 mb-1 block">Your email address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && sendLink()}
+                placeholder="you@email.com"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
             </div>
-          )}
-          <div>
-            <label className="text-xs text-gray-500 mb-1 block">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-          </div>
-          <div>
-            <label className="text-xs text-gray-500 mb-1 block">Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-          </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          {message && <p className="text-green-600 text-sm">{message}</p>}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <button onClick={handle} disabled={loading}
-            className="w-full bg-green-700 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-green-800 disabled:opacity-50 transition-colors">
-            {loading ? "Please wait..." : mode === "login" ? "Log In" : "Create Account"}
-          </button>
-        </div>
+            <button onClick={sendLink} disabled={loading || !email}
+              className="w-full bg-green-700 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-green-800 disabled:opacity-50 transition-colors">
+              {loading ? "Sending..." : "Send Magic Link"}
+            </button>
+
+            <p className="text-center text-xs text-gray-400 pt-1">
+              New or returning — one link signs you in or creates your account.
+            </p>
+          </div>
+        )}
 
         <p className="text-center text-xs text-gray-400 mt-6">
           By continuing you agree to Thoppu&apos;s Terms of Service
