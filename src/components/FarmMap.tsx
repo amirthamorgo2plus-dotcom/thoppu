@@ -60,6 +60,8 @@ interface Props {
 }
 
 export default function FarmMapLeaflet({ markers, geofences, drawing, drawPoints, onAddPoint }: Props) {
+  const [satellite, setSatellite] = useState(true);
+
   const validMarkers = markers
     .filter(m => m.lat && m.lng && !isNaN(parseFloat(m.lat)) && !isNaN(parseFloat(m.lng)))
     .map(m => ({ ...m, lat: parseFloat(m.lat), lng: parseFloat(m.lng) }));
@@ -74,11 +76,37 @@ export default function FarmMapLeaflet({ markers, geofences, drawing, drawPoints
     : [11.0168, 76.9558];
 
   return (
+    <div className="relative">
+      {/* Layer toggle */}
+      <div className="absolute top-3 right-3 z-[1000] flex rounded-lg overflow-hidden shadow-md border border-gray-300">
+        <button onClick={() => setSatellite(true)}
+          className={`px-3 py-1.5 text-xs font-medium ${satellite ? "bg-green-700 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>
+          Satellite
+        </button>
+        <button onClick={() => setSatellite(false)}
+          className={`px-3 py-1.5 text-xs font-medium ${!satellite ? "bg-green-700 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>
+          Street
+        </button>
+      </div>
     <MapContainer center={center} zoom={14} style={{ height: "450px", width: "100%", borderRadius: "12px" }} scrollWheelZoom={true}>
-      <TileLayer
-        attribution='Tiles &copy; Esri &mdash; Esri, Maxar, Earthstar Geographics'
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-      />
+      {satellite ? (
+        <>
+          <TileLayer
+            attribution='Tiles &copy; Esri &mdash; Esri, Maxar, Earthstar Geographics'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          />
+          <TileLayer
+            attribution=""
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+            opacity={0.8}
+          />
+        </>
+      ) : (
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+      )}
       {allPoints.length > 0 && <FitBounds markers={allPoints} />}
       <ClickHandler drawing={drawing} onAddPoint={onAddPoint} />
 
@@ -112,5 +140,6 @@ export default function FarmMapLeaflet({ markers, geofences, drawing, drawPoints
         </Marker>
       ))}
     </MapContainer>
+    </div>
   );
 }
