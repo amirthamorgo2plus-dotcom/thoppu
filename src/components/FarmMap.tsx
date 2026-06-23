@@ -58,8 +58,8 @@ export default function FarmMapLeaflet({ markers }: { markers: Marker[] }) {
   return (
     <MapContainer center={center} zoom={13} style={{ height: "400px", width: "100%", borderRadius: "12px" }} scrollWheelZoom={true}>
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
       />
       {validMarkers.length > 0 && <FitBounds markers={validMarkers} />}
       {validMarkers.map(m => (
