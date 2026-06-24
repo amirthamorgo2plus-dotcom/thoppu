@@ -455,6 +455,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── ECOSYSTEM / EXPERIENCES (COMING SOON) ── */}
+      <section id="experiences" className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+              Coming Soon
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">More than management — a whole farm ecosystem</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">A farm can earn in every direction. Thoppu is opening farms to families, schools, students and experts — all from the same app.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: "🌳", title: "Farm Day-Out", desc: "Weekend farm experiences for families — grove walks, fruit plucking, bullock-cart rides, banana-leaf Tamil lunch. Kid & elder friendly.", who: "For families & corporates" },
+              { icon: "🎒", title: "School Trips", desc: "Curriculum-linked, safe educational field trips — seed-to-harvest, composting, water management. Consent slips & certificates built in.", who: "For schools & colleges" },
+              { icon: "🎓", title: "Agri Internships", desc: "Hands-on internships connecting agri students and aspiring farmers with real host farms. Attendance, stipend & certificates.", who: "For students & host farms" },
+              { icon: "🧑‍🌾", title: "Agri Consultancy", desc: "On-demand expert advice + AI advisory in Tamil — crop planning, pest control, organic certification, govt schemes.", who: "For farmers & FPOs" },
+            ].map(({ icon, title, desc, who }) => (
+              <div key={title} className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-6 relative">
+                <span className="absolute top-4 right-4 text-[10px] font-semibold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">Soon</span>
+                <div className="text-3xl mb-3">{icon}</div>
+                <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
+                <p className="text-gray-500 text-sm mb-3 leading-relaxed">{desc}</p>
+                <span className="text-xs font-medium text-green-700">{who}</span>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <p className="text-gray-500 text-sm mb-4">Want to host visitors, trips or interns on your farm?</p>
+            <Link href="/login" className="inline-flex items-center gap-2 bg-green-700 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-800 transition-colors text-sm">
+              Join the Waitlist <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS ── */}
       <section className="py-20 px-6 bg-green-50">
         <div className="max-w-4xl mx-auto">
