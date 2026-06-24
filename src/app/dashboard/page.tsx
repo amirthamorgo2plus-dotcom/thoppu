@@ -55,7 +55,7 @@ export default function Dashboard() {
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-50">
               {[
-                ["Farm Name", "Kallapuram Thetham"],
+                ["Farm Name", "Kallapuram Thottam"],
                 ["Location", "Tamil Nadu"],
                 ["Area", "100+ acres"],
                 ["Primary Crop", "Coconut"],

@@ -44,7 +44,7 @@ export default function Sidebar() {
         ))}
       </nav>
       <div className="px-6 py-4 border-t border-green-700 text-green-400 text-xs">
-        Kallapuram Thetham · 100+ acres
+        Kallapuram Thottam · 100+ acres
       </div>
     </aside>
   );

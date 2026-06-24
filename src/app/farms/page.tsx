@@ -72,7 +72,7 @@ export default function Farms() {
               <div className="col-span-2">
                 <label className="text-xs text-gray-500 mb-1 block">Farm Name *</label>
                 <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  placeholder="e.g. Kallapuram Thetham"
+                  placeholder="e.g. Kallapuram Thottam"
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
               </div>
               <div>
