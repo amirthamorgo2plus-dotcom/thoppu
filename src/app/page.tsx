@@ -465,6 +465,34 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">More than management — a whole farm ecosystem</h2>
             <p className="text-gray-500 max-w-2xl mx-auto">A farm can earn in every direction. Thoppu is opening farms to families, schools, students and experts — all from the same app.</p>
           </div>
+          {/* Featured: Farm Resort */}
+          <div className="bg-gradient-to-br from-green-900 to-emerald-800 rounded-3xl p-8 md:p-10 mb-6 text-white relative overflow-hidden">
+            <span className="absolute top-5 right-5 text-[10px] font-semibold text-amber-200 bg-white/15 px-2.5 py-1 rounded-full">Coming Soon</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="text-4xl mb-3">🏕️🧘</div>
+                <h3 className="text-2xl md:text-3xl font-bold mb-3">Thoppu Farm Resort — your calm escape</h3>
+                <p className="text-green-100 leading-relaxed mb-5">
+                  A quiet, screen-free retreat in a real coconut farm. Capsule stays, a compact pool, farm-to-table meals, meditation &amp; yoga decks, and easy games — built for Gen-Z and young travellers who just want to unplug from the rush and breathe.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["🧘 Meditation & yoga deck", "🛏️ Capsule stays", "💧 Compact pool", "🍃 Digital detox", "🍽️ Farm-to-table", "🏸 Games & nature trails"].map(t => (
+                    <span key={t} className="text-xs bg-white/10 border border-white/15 rounded-full px-3 py-1">{t}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white/10 rounded-2xl p-6 border border-white/15">
+                <p className="text-green-200 text-sm font-medium mb-3">Who it&apos;s for</p>
+                <ul className="space-y-2 text-sm text-green-50">
+                  <li>🌏 Foreign youngsters & backpackers seeking authentic rural India</li>
+                  <li>💻 Burnt-out professionals & digital nomads wanting a reset</li>
+                  <li>🧘 Wellness / meditation & yoga retreat groups</li>
+                  <li>👫 Couples & friend-groups for a weekend unplug</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { icon: "🌳", title: "Farm Day-Out", desc: "Weekend farm experiences for families — grove walks, fruit plucking, bullock-cart rides, banana-leaf Tamil lunch. Kid & elder friendly.", who: "For families & corporates" },
