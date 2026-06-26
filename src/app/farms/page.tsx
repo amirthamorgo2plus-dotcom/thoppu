@@ -48,7 +48,7 @@ export default function Farms() {
           <div className="flex items-center gap-3">
             <Image src="/logo.png" alt="Thoppu" width={40} height={40} />
             <div>
-              <div className="font-bold text-green-900">Thoppu</div>
+              <div className="font-bold text-green-900">Thoppu <span className="font-medium text-green-600">தோப்பு</span></div>
               <div className="text-xs text-gray-500">Welcome, {userName}</div>
             </div>
           </div>

@@ -41,7 +41,7 @@ export default function FarmSidebar({ farmId }: { farmId: string }) {
           <Image src="/logo.png" alt="Thoppu" width={40} height={40} className="rounded-lg" />
           <div className="min-w-0">
             <div className="font-bold text-sm leading-tight truncate">{farmName}</div>
-            <div className="text-green-400 text-xs">Thoppu Farm Manager</div>
+            <div className="text-green-400 text-xs">Thoppu தோப்பு · Farm Manager</div>
           </div>
         </div>
 

@@ -15,7 +15,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
           <div className="flex items-center gap-2.5">
             <Image src="/logo.png" alt="Thoppu" width={36} height={36} />
-            <span className="font-bold text-green-900 text-lg">Thoppu</span>
+            <span className="font-bold text-green-900 text-lg">Thoppu <span className="font-medium text-green-600">தோப்பு</span></span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
             <a href="#" className="hover:text-green-700">Home</a>
@@ -600,7 +600,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image src="/logo.png" alt="Thoppu" width={28} height={28} />
-            <span className="font-bold text-green-900">Thoppu</span>
+            <span className="font-bold text-green-900">Thoppu <span className="font-medium text-green-600">தோப்பு</span></span>
             <span className="text-gray-400 text-sm">— Your Farm, In Your Palm</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-gray-500">

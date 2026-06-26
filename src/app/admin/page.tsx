@@ -57,7 +57,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-green-900 text-white px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">Thoppu Admin</h1>
+          <h1 className="text-xl font-bold">Thoppu தோப்பு Admin</h1>
           <p className="text-green-300 text-xs mt-0.5">Logged in as Admin</p>
         </div>
         <button onClick={signOut} className="flex items-center gap-2 text-green-300 hover:text-white text-sm">

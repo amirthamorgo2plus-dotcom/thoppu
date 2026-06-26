@@ -26,7 +26,7 @@ export default function Login() {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
         <div className="flex flex-col items-center mb-8">
           <Image src="/logo.png" alt="Thoppu" width={72} height={72} className="mb-3" />
-          <h1 className="text-2xl font-bold text-green-900">Thoppu</h1>
+          <h1 className="text-2xl font-bold text-green-900">Thoppu <span className="font-semibold text-green-600">தோப்பு</span></h1>
           <p className="text-gray-500 text-sm mt-1">Your farm, in your palm</p>
         </div>
 

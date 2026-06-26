@@ -23,7 +23,7 @@ export default function Sidebar() {
       <div className="flex items-center gap-3 px-4 py-4 border-b border-green-700">
         <Image src="/logo.png" alt="Thoppu" width={44} height={44} className="rounded-lg" />
         <div>
-          <div className="font-bold text-lg leading-tight">Thoppu</div>
+          <div className="font-bold text-lg leading-tight">Thoppu <span className="font-medium text-green-300">தோப்பு</span></div>
           <div className="text-green-400 text-xs">Farm Manager</div>
         </div>
       </div>
