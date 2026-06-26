@@ -24,7 +24,7 @@ export default function Sidebar() {
         <Image src="/logo.png" alt="Thoppu" width={44} height={44} className="rounded-lg" />
         <div>
           <div className="font-bold text-lg leading-tight">Thoppu <span className="font-medium text-green-300">தோப்பு</span></div>
-          <div className="text-green-400 text-xs">Farm Manager</div>
+          <div className="text-green-400 text-xs">Your farm, in your palm</div>
         </div>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">

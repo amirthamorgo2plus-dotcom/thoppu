@@ -5,7 +5,7 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Thoppu தோப்பு — Farm Manager",
+  title: "Thoppu தோப்பு — Your farm, in your palm",
   description: "Remote farm management for Tamil Nadu plantation owners",
   icons: {
     icon: "/logo.png",
