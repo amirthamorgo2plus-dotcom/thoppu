@@ -5,6 +5,7 @@ import {
   TrendingUp, Shield, Smartphone, CheckCircle, CloudSun, IndianRupee,
   MapPin, Zap, BarChart3, Satellite,
 } from "lucide-react";
+import CatchCoconuts from "@/components/CatchCoconuts";
 
 export default function Home() {
   return (
@@ -515,6 +516,20 @@ export default function Home() {
               Join the Waitlist <ArrowRight size={16} />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── MINI GAME ── */}
+      <section id="game" className="py-20 px-6 bg-gradient-to-b from-white to-green-50">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+              🎮 Just for fun
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Play Thoppu Catch 🥥</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">Bring the kids along — catch falling coconuts and beat your best score. A little taste of farm life.</p>
+          </div>
+          <CatchCoconuts />
         </div>
       </section>
 
